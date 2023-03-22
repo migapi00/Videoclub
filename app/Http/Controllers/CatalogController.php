@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Movie;
-
+use Illuminate\Support\Facades\Auth;
 
 class CatalogController extends Controller
 
 {
     public function getIndex()
     {
+        $user = Auth::user();
+        dd($user);
        return view('catalog.index', [  'movies' => Movie::latest()->paginate()]);
     }
 
