@@ -6,23 +6,34 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MoviesController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+Route::get('/', [HomeController::class, 'getHome'])->name('home');
 
-Route::get('/', [HomeController::class, 'getHome']);
-Route::get('catalog', [CatalogController::class, 'getIndex']);
-Route::get('catalog/show/{id}', [CatalogController::class, 'getShow']);
-Route::get('catalog/create', [CatalogController::class, 'getCreate']);
-Route::get('catalog/edit/{id}', [CatalogController::class, 'getEdit']);
+
+
+Route::prefix('catalog')->group(function () {
+    Route::match(['get','post'],'/', [CatalogController::class, 'getIndex'])->name('catalog.index');
+    Route::get('/show/{id}', [CatalogController::class, 'getShow'])->name('catalog.show');
+    Route::middleware('auth')->get('/edit/{id}', [CatalogController::class, 'getEdit'])->name('catalog.edit');
+});
+// Route::get('catalog', [CatalogController::class, 'getIndex']) ->name('catalog.index');
+// Route::get('catalog/show/{id}', [CatalogController::class, 'getShow']);
+// Route::get('posts/create', [CatalogController::class, 'getCreate']);
+
+Route::middleware('auth')->post('/posts/save', [MoviesController::class, 'hola'])->name('posts.save');
+
+Route::resource('posts', MoviesController::class)->except(['show']);
+
+Route::get('customer', [CatalogController::class, 'getShow']);
+
+
+// Route::prefix('admin')->group(function () {
+//     Route::get('/users', function () {
+//         // Matches The "/admin/users" URL
+//     });
+// });
+
 
 
 // Route::get('/', function () {
@@ -45,5 +56,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-
